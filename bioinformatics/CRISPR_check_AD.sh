@@ -13,7 +13,7 @@ REFERENCE=/lustre/BIF/nobackup/brigg002/novogene2024/Af293_combined.fna
 #echo "Start filtering DP"
 #bcftools +setGT MR_AD_contamination_removed.vcf.gz \
 #  -Oz -o MR_AD_DP.vcf.gz \
-#  -- -tq -i 'FMT/DP<6' --new-gt .
+#  -- -tq -i 'FMT/DP<10' --new-gt .
 
 #bcftools +setGT MR_AD_DP.vcf.gz \
 #        -Oz -o MR_AD_DP_v02.vcf.gz \
@@ -77,6 +77,8 @@ bcftools +fill-tags MR_AD_good_variants.vcf.gz -Oz -o tmp.vcf.gz -- -t AC,AN,AF
 mv tmp.vcf.gz MR_AD_VAF_adjusted_v02.vcf.gz
 bcftools index -f MR_AD_VAF_adjusted_v02.vcf.gz
 
+
+##Here the filtering for the CRISPR analysis will be done
 echo "Start filtering on AC"
 bcftools view -i "INFO/AC!=0 & INFO/AC!=INFO/AN" MR_AD_VAF_adjusted_v02.vcf.gz -Oz -o final_MR_AD_v02.vcf.gz
 bcftools index -f final_MR_AD_v02.vcf.gz
@@ -91,4 +93,12 @@ echo "Start filtering on AC"
 bcftools view -i "INFO/AC!=0 & INFO/AC!=4 & INFO/AN=4" MR_AD_ances.vcf.gz -Oz -o MR_AD_ances_v02.vcf.gz
 bcftools index -f MR_AD_ances_v02.vcf.gz
 echo "Done filtering on AC"
+
+##Here the the filtering of the data will be done for further analysis of the evolved lines. 
+echo "Start filtering on AC"
+bcftools view -i "INFO/AC!=0 & INFO/AC<5" MR_AD_VAF_adjusted_v02.vcf.gz  -Oz -o final_strict_VAF_MR_AD.vcf.gz
+bcftools index -f final_strict_VAF_MR_AD.vcf.gz
+echo "Done filtering on AC"
+
+
 
